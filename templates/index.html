@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ROADSTER 3D &bull; NLEX Cyber Expressway (Aero Thruster Supercar Arcade)</title>
+  
+  <!-- Retro Pixel Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (with cache-busting) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ v }}">
+</head>
+<body>
+  <!-- Arcade Cabinet Theater Shell -->
+  <div class="arcade-container" id="arcadeContainer">
+    
+    <!-- Top Arcade Marquee Header -->
+    <header class="arcade-header">
+      <div class="header-leds">
+        <span class="led red-led"></span>
+        <span class="led yellow-led"></span>
+        <span class="led green-led"></span>
+      </div>
+      <h1 class="marquee-title">
+        <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+        ROADSTER 3D &bull; NLEX CYBER SKYWAY RACER
+        <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+      </h1>
+      <div class="header-controls">
+        <button id="resToggleBtn" class="pixel-mini-btn" title="Toggle 3D Pixel Resolution">
+          <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M3 3h4v4H3zm6 0h4v4H9zm6 0h4v4h-4zm0 6h4v4h-4zm-6 0h4v4H9zm-6 0h4v4H3zm0 6h4v4H3zm6 0h4v4H9zm6 0h4v4h-4z" fill="currentColor"/></svg>
+          <span class="btn-label">RES: RETRO (360p)</span>
+        </button>
+        <button id="soundToggleBtn" class="pixel-mini-btn" title="Toggle Sound FX">
+          <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="currentColor"/></svg>
+          <span class="btn-label">SFX ON</span>
+        </button>
+        <button id="crtToggleBtn" class="pixel-mini-btn" title="Toggle CRT Scanlines">
+          <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z" fill="currentColor"/></svg>
+          <span class="btn-label">CRT ON</span>
+        </button>
+        <a href="/" class="pixel-mini-btn" title="Back to Home Hub & Leaderboard" style="text-decoration:none; display:inline-flex; align-items:center;">
+          <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
+          <span class="btn-label">HUB</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Theater Screen Viewport Frame (16:9 Widescreen) -->
+    <div class="screen-wrapper" id="screenWrapper">
+      <!-- Three.js 3D Pixelated Canvas -->
+      <canvas id="gameCanvas"></canvas>
+      
+      <!-- CRT Filter Overlay -->
+      <div class="crt-overlay active" id="crtOverlay"></div>
+
+      <!-- In-Game Retro HUD -->
+      <div class="game-hud" id="gameHud">
+        <!-- Top HUD Row -->
+        <div class="hud-row top-hud">
+          <div class="hud-box">
+            <span class="hud-label">SCORE</span>
+            <span class="hud-value" id="hudScore">000000</span>
+          </div>
+          <div class="hud-box highlight">
+            <span class="hud-label">RECORD</span>
+            <span class="hud-value" id="hudHighScore">000000</span>
+          </div>
+          <div class="hud-box">
+            <span class="hud-label">DIST</span>
+            <span class="hud-value" id="hudDistance">0.0 KM</span>
+          </div>
+          <div class="hud-box wind-hud-box" id="hudWindBox">
+            <span class="hud-label">WIND DRAFT</span>
+            <span class="hud-value" id="hudWindStatus">
+              <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M12.5 4a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5h6a2 2 0 1 0 0-4h-6zm-4 7a2 2 0 0 0-2 2 2 2 0 0 0 2 2h11a2.5 2.5 0 1 0 0-5h-11zm-2 7a2 2 0 0 0-2 2 2 2 0 0 0 2 2h7a2 2 0 1 0 0-4h-7z" fill="currentColor"/></svg>
+              <span id="hudWindText">NO DRAFT</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Stage / Checkpoint Banner on Road -->
+        <div class="checkpoint-banner" id="checkpointBanner">
+          <span class="banner-badge">STAGE 1</span>
+          <span class="banner-text">BALINTAWAK TOLL PLAZA</span>
+        </div>
+
+        <!-- Floating In-Game Notifications -->
+        <div class="toast-message" id="toastMessage"></div>
+
+        <!-- Bottom HUD Row -->
+        <div class="hud-row bottom-hud">
+          <!-- Speed & Boost Bars -->
+          <div class="hud-cluster left-cluster">
+            <div class="meter-group">
+              <div class="meter-label-row">
+                <span class="meter-title">
+                  <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M12 4a8 8 0 0 0-8 8c0 2.21.9 4.21 2.34 5.66l1.41-1.41A6 6 0 1 1 18 12h2a8 8 0 0 0-8-8zm-1 4v5.18l3.71 2.14.75-1.3-3.46-2V8h-1z" fill="currentColor"/></svg>
+                  SPEED
+                </span>
+                <span class="meter-num" id="hudSpeed">0 KPH</span>
+              </div>
+              <div class="meter-bar-outer speed-meter">
+                <div class="meter-bar-fill" id="speedBarFill"></div>
+              </div>
+            </div>
+
+            <div class="meter-group">
+              <div class="meter-label-row">
+                <span class="meter-title">
+                  <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+                  NITRO (SHIFT)
+                </span>
+                <span class="meter-num" id="hudBoostPercent">100%</span>
+              </div>
+              <div class="meter-bar-outer boost-meter">
+                <div class="meter-bar-fill" id="boostBarFill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Health / Battery Cells -->
+          <div class="hud-cluster right-cluster">
+            <div class="meter-title text-right">BATTERY HEALTH</div>
+            <div class="health-battery-container" id="healthContainer">
+              <span class="battery-cell active" id="cell1">
+                <svg class="game-icon" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+              </span>
+              <span class="battery-cell active" id="cell2">
+                <svg class="game-icon" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+              </span>
+              <span class="battery-cell active" id="cell3">
+                <svg class="game-icon" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TITLE SCREEN OVERLAY -->
+      <div class="screen-modal active" id="titleModal">
+        <div class="title-content">
+          <div class="pixel-badge">PROJECT ROADSTER &bull; COLD-GAS THRUSTER SUPERCAR</div>
+          <h1 class="main-title">ROADSTER<br><span class="highlight-title">3D ARCADE</span></h1>
+          <p class="subtitle">Next-Gen Rocket Thruster Supercar on NLEX Cyber Expressway</p>
+          
+          <!-- Roadster Concept Context Card -->
+          <div class="roadster-concept-card">
+            <div class="concept-badge">
+              <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+              <span>WHY THE ROADSTER? CONCEPT BRIEFING</span>
+            </div>
+            <p class="concept-desc">
+              Engineered with <strong>SpaceX Cold-Gas Aero Thrusters</strong>, the <strong>Roadster</strong> drafts behind expressway traffic to harness slipstreams, launching high-altitude <strong>360° stunt jumps</strong> over 18-wheeler trucks, with <strong>Nitro Boost (SHIFT)</strong> for supersonic speed!
+            </p>
+          </div>
+
+          <!-- Car Preview Showcase -->
+          <div class="car-preview-box">
+            <canvas id="carPreviewCanvas" width="160" height="110"></canvas>
+            <div class="color-picker-label">CUSTOMIZE YOUR ROADSTER FINISH:</div>
+            <div class="color-options">
+              <button class="color-btn active" data-color="silver" title="Cyber Silver">
+                <span class="color-swatch silver"></span> Silver
+              </button>
+              <button class="color-btn" data-color="red" title="Electric Red">
+                <span class="color-swatch red"></span> Red
+              </button>
+              <button class="color-btn" data-color="blue" title="Neon Azure">
+                <span class="color-swatch blue"></span> Blue
+              </button>
+              <button class="color-btn" data-color="gold" title="Solar Gold">
+                <span class="color-swatch gold"></span> Gold
+              </button>
+            </div>
+          </div>
+
+          <!-- Expressway Stage Highlights -->
+          <div class="route-preview">
+            <div class="route-step">
+              <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-3.79l-2.6 1.5-1-1.73L10 11.02V8h2v3.02l2.6 1.46-1 1.73-2.6-1.5v3.79h-1z" fill="currentColor"/></svg>
+              1. Balintawak Toll Plaza
+            </div>
+            <div class="route-step">
+              <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" fill="currentColor"/></svg>
+              2. Bocaue & Marilao Express
+            </div>
+            <div class="route-step">
+              <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M2 12c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2v2c-2.5 0-2.5-2-5-2s-2.5 2-5 2-2.5-2-5-2-2.5 2-5 2v-2z" fill="currentColor"/></svg>
+              3. Candaba Viaduct Skyway
+            </div>
+            <div class="route-step">
+              <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M15 11V5l-3-3-3 3v2H3v14h18V11h-6zm-8 8H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm6 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm6 12h-2v-2h2v2zm0-4h-2v-2h2v2z" fill="currentColor"/></svg>
+              4. Clark Cyber Metropolis
+            </div>
+          </div>
+
+          <!-- Controls Help -->
+          <div class="controls-guide">
+            <div class="control-col">
+              <span class="key-cap">A</span> <span class="key-cap">D</span> or <span class="key-cap">&#9664;</span> <span class="key-cap">&#9654;</span> Steer
+            </div>
+            <div class="control-col">
+              <span class="key-cap">W</span> Throttle &bull; <span class="key-cap">S</span> Brake
+            </div>
+            <div class="control-col">
+              <span class="key-cap">SHIFT</span> Nitro &bull; <span class="key-cap">SPACE</span> 360&deg; Jump (Slipstream)
+            </div>
+          </div>
+
+          <button id="startGameBtn" class="pixel-btn play-btn pulse-anim">
+            <svg class="game-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            LAUNCH ROADSTER MISSION (START RACE)
+          </button>
+          
+          <button id="openVideoBtn" class="pixel-btn outline-btn" style="font-size:8px; padding:6px 14px; margin-top:2px; cursor: pointer;">
+            <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M12 2.5s-4 4-4 9.5c0 3.5 2 6 4 7 2-1 4-3.5 4-7 0-5.5-4-9.5-4-9.5zm-5 13.5c-1.5 1-2.5 3-2.5 5 2 0 4-1 5-2.5-1-1-1.8-1.8-2.5-2.5zm10 0c-.7.7-1.5 1.5-2.5 2.5 1 1.5 3 2.5 5 2.5 0-2-1-4-2.5-5z" fill="currentColor"/></svg>
+            WATCH ROADSTER COLD-GAS THRUSTERS (9:16 DEMO)
+          </button>
+
+          <p class="credits-tag">Fully 3D Low-Poly WebGL &bull; Nearest-Neighbor Pixelated &bull; Flask & Three.js</p>
+        </div>
+      </div>
+
+      <!-- GAME OVER SCREEN OVERLAY -->
+      <div class="screen-modal" id="gameOverModal">
+        <div class="modal-card">
+          <div class="game-over-banner">ROADSTER TOTALED!</div>
+          <div class="game-over-subtitle">EXPERIMENTAL ROADSTER CHASSIS DESTROYED ON NLEX!</div>
+          
+          <div class="stats-panel">
+            <div class="stat-row">
+              <span>FINAL SCORE:</span>
+              <strong id="goScore">0</strong>
+            </div>
+            <div class="stat-row">
+              <span>DISTANCE COVERED:</span>
+              <strong id="goDistance">0.0 KM</strong>
+            </div>
+            <div class="stat-row">
+              <span>TOP HIGHWAY SPEED:</span>
+              <strong id="goTopSpeed">0 KPH</strong>
+            </div>
+            <div class="stat-row">
+              <span>STAGE REACHED:</span>
+              <strong id="goCheckpoint">Balintawak</strong>
+            </div>
+            <div class="stat-row highlight">
+              <span>ALL-TIME RECORD:</span>
+              <strong id="goHighScore">0</strong>
+            </div>
+          </div>
+
+          <div class="submit-score-card" id="submitScoreCard">
+            <div class="submit-card-header">
+              <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+              <span>SUBMIT SCORE TO GLOBAL HALL OF FAME</span>
+            </div>
+            <div class="submit-input-row">
+              <input type="text" id="driverCallsignInput" class="callsign-input" placeholder="PILOT CALLSIGN" maxlength="14" autocomplete="off" spellcheck="false" />
+              <button id="btnSubmitScore" class="pixel-btn submit-score-btn" type="button">
+                <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/></svg>
+                POST SCORE
+              </button>
+            </div>
+            <div class="submit-feedback" id="submitFeedback"></div>
+          </div>
+
+          <div class="game-over-actions">
+            <button id="restartGameBtn" class="pixel-btn play-btn">
+              <svg class="game-icon" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/></svg>
+              REPAIR &amp; RELAUNCH ROADSTER (R)
+            </button>
+            <a href="/#leaderboard" class="pixel-btn secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+              <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+              GLOBAL LEADERBOARD
+            </a>
+            <a href="/" class="pixel-btn outline-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+              <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
+              HOME HUB
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAUSE SCREEN OVERLAY -->
+      <div class="screen-modal" id="pauseModal">
+        <div class="modal-card mini">
+          <div class="game-over-banner pause">MISSION PAUSED</div>
+          <div class="game-over-subtitle">ROADSTER DRIVE SUSPENDED</div>
+          <p class="pause-hint">Press <strong>P</strong> or <strong>ESC</strong> to resume</p>
+          <button id="resumeBtn" class="pixel-btn play-btn">
+            <svg class="game-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            RESUME ROADSTER MISSION
+          </button>
+        </div>
+      </div>
+
+      <!-- COLD-GAS THRUSTERS VIDEO MODAL (9:16 VERTICAL POPUP) -->
+      <div class="screen-modal" id="videoModal">
+        <div class="modal-card" style="max-width: 360px; padding: 12px; gap: 8px;">
+          <div class="game-over-banner pause" style="font-size: 13px;">
+            <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M12 2.5s-4 4-4 9.5c0 3.5 2 6 4 7 2-1 4-3.5 4-7 0-5.5-4-9.5-4-9.5zm-5 13.5c-1.5 1-2.5 3-2.5 5 2 0 4-1 5-2.5-1-1-1.8-1.8-2.5-2.5zm10 0c-.7.7-1.5 1.5-2.5 2.5 1 1.5 3 2.5 5 2.5 0-2-1-4-2.5-5z" fill="currentColor"/></svg>
+            COLD-GAS HOVER (9:16)
+          </div>
+          <div class="game-over-subtitle">8s Retro 16-Bit Pixel-Art Sequence</div>
+          
+          <div style="width: 100%; aspect-ratio: 9/16; max-height: 380px; border: 2px solid var(--neon-cyan); border-radius: 6px; overflow: hidden; background: #000;">
+            <video id="modalVideo" loop muted playsinline controls style="width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated;">
+              <source src="{{ url_for('static', filename='videos/roadster_thruster_animation.mp4') }}?v={{ v }}" type="video/mp4">
+            </video>
+          </div>
+
+          <div style="display: flex; gap: 8px; width: 100%; margin-top: 4px;">
+            <button id="closeVideoBtn" class="pixel-btn play-btn" style="flex: 1; font-size: 8px; padding: 6px 10px;">
+              <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
+              CLOSE
+            </button>
+            <a href="{{ url_for('static', filename='videos/roadster_thruster_animation.mp4') }}" download="roadster_cold_gas_thrusters.mp4" class="pixel-btn outline-btn" style="flex: 1; font-size: 8px; padding: 6px 10px; text-decoration: none; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+              <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor"/></svg>
+              DOWNLOAD MP4
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mobile Touch On-Screen Controls -->
+    <div class="mobile-controls" id="mobileControls">
+      <div class="dpad-group">
+        <button class="touch-btn" id="btnSteerLeft" aria-label="Steer Left">
+          <svg class="game-icon lg" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/></svg>
+        </button>
+        <button class="touch-btn" id="btnSteerRight" aria-label="Steer Right">
+          <svg class="game-icon lg" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="pedal-group">
+        <button class="touch-btn brake-btn" id="btnBrakeAction" aria-label="Brake">
+          <svg class="game-icon lg" viewBox="0 0 24 24"><path d="M8.27 3L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3H8.27zM7 11h10v2H7v-2z" fill="currentColor"/></svg>
+        </button>
+        <button class="touch-btn gas-btn" id="btnGasAction" aria-label="Gas">
+          <svg class="game-icon lg" viewBox="0 0 24 24"><path d="M12 4a8 8 0 0 0-8 8c0 2.21.9 4.21 2.34 5.66l1.41-1.41A6 6 0 1 1 18 12h2a8 8 0 0 0-8-8zm-1 4v5.18l3.71 2.14.75-1.3-3.46-2V8h-1z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="action-group">
+        <button class="touch-btn jump-action-btn" id="btnJumpAction" aria-label="360 Stunt Jump">
+          <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M12.5 4a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5h6a2 2 0 1 0 0-4h-6zm-4 7a2 2 0 0 0-2 2 2 2 0 0 0 2 2h11a2.5 2.5 0 1 0 0-5h-11zm-2 7a2 2 0 0 0-2 2 2 2 0 0 0 2 2h7a2 2 0 1 0 0-4h-7z" fill="currentColor"/></svg>
+          JUMP
+        </button>
+        <button class="touch-btn boost-action-btn" id="btnBoostAction" aria-label="Nitro Boost">
+          <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
+          BOOST
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Instruction Bar -->
+    <footer class="arcade-footer">
+      <span>Steer: [A/D or &#9664;/&#9654;] &bull; Gas/Brake: [W/S] &bull; Nitro: [SHIFT] &bull; 360&deg; Jump: [SPACEBAR (In Slipstream)] &bull; Pause: [P/ESC] &bull; Restart: [R]</span>
+    </footer>
+
+  </div>
+
+  <!-- Local Three.js 3D Engine (Self-Contained with Cache-Buster) -->
+  <script src="{{ url_for('static', filename='three.min.js') }}?v={{ v }}"></script>
+  <!-- Main 3D Pixelated Game JavaScript -->
+  <script src="{{ url_for('static', filename='game.js') }}?v={{ v }}"></script>
+</body>
+</html>

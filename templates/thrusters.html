@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tesla Roadster Cold-Gas Thrusters Animation (8s 9:16 Pixel Art)</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .video-showcase-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 520px;
+      width: 100%;
+      background: #12131c;
+      border: 4px solid #363447;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.9), 0 0 25px rgba(0, 240, 255, 0.2);
+    }
+
+    .video-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 9 / 16;
+      background: #0a0c12;
+      border: 3px solid #00f0ff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+    }
+
+    .video-viewport video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    .timeline-guide {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(18, 22, 34, 0.85);
+      border: 2px solid #2d364f;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-top: 12px;
+      font-size: 8px;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .time-badge {
+      background: #00f0ff;
+      color: #000;
+      padding: 2px 5px;
+      border-radius: 2px;
+      font-weight: bold;
+      font-size: 7px;
+      min-width: 45px;
+      text-align: center;
+    }
+
+    .video-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      width: 100%;
+      max-width: 440px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-link-btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="video-showcase-container">
+    
+    <header class="arcade-header">
+      <div class="header-leds">
+        <span class="led red-led"></span>
+        <span class="led yellow-led"></span>
+        <span class="led green-led"></span>
+      </div>
+      <h1 class="marquee-title">⚡ ROADSTER THRUSTERS (9:16) ⚡</h1>
+      <a href="/" class="pixel-mini-btn nav-link-btn">🎮 BACK TO GAME</a>
+    </header>
+
+    <!-- 9:16 Vertical Video Frame -->
+    <div class="video-viewport">
+      <video id="roadsterVideo" autoplay loop muted playsinline controls>
+        <source src="{{ url_for('static', filename='videos/roadster_thruster_animation.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <!-- Timeline Breakdown -->
+    <div class="timeline-guide">
+      <div style="font-weight: bold; color: var(--arcade-gold); margin-bottom: 2px;">
+        🎬 8-SECOND CINEMATIC BREAKDOWN:
+      </div>
+      <div class="timeline-step">
+        <span class="time-badge">0–2s</span>
+        <span>Smooth ground driving left-to-right, tire rotation, pixelated road dust.</span>
+      </div>
+      <div class="timeline-step">
+        <span class="time-badge">2–4s</span>
+        <span>Vehicle slows to stop; underbody cold-gas thrusters blast intense blue plasma downward.</span>
+      </div>
+      <div class="timeline-step">
+        <span class="time-badge">4–6s</span>
+        <span>Lifts ~0.5m &amp; hovers rock-solid level; continuous blue thruster flame &amp; outward ground dust shockwaves.</span>
+      </div>
+      <div class="timeline-step">
+        <span class="time-badge">6–8s</span>
+        <span>Thrusters weaken, car lowers smoothly to ground, suspension compresses on landing, particles disperse.</span>
+      </div>
+    </div>
+
+    <div class="video-actions">
+      <a href="{{ url_for('static', filename='videos/roadster_thruster_animation.mp4') }}" download="roadster_thruster_animation.mp4" class="pixel-btn play-btn nav-link-btn">
+        💾 DOWNLOAD MP4 (9:16)
+      </a>
+      <a href="{{ url_for('static', filename='videos/roadster_thruster_animation.gif') }}" download="roadster_thruster_animation.gif" class="pixel-btn outline-btn nav-link-btn">
+        🖼️ DOWNLOAD GIF
+      </a>
+    </div>
+
+  </div>
+</body>
+</html>
