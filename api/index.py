@@ -8,7 +8,7 @@ import os
 import json
 import time
 from datetime import datetime
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, send_from_directory
 
 # Detect directories
 API_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -213,8 +213,15 @@ def thrusters():
 
 @app.route('/favicon.ico')
 def favicon():
-    """Silence browser favicon requests."""
-    return ('', 204)
+    """Serve the pixel wheel favicon."""
+    fav_dir = STATIC_FOLDER if os.path.exists(os.path.join(STATIC_FOLDER, 'favicon.ico')) else ROOT_DIR
+    return send_from_directory(fav_dir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/favicon.png')
+def favicon_png():
+    """Serve the 64x64 pixel wheel PNG icon."""
+    fav_dir = STATIC_FOLDER if os.path.exists(os.path.join(STATIC_FOLDER, 'favicon.png')) else ROOT_DIR
+    return send_from_directory(fav_dir, 'favicon.png', mimetype='image/png')
 
 @app.route('/api/leaderboard', methods=['GET', 'POST'])
 def handle_leaderboard():

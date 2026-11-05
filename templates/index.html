@@ -10,6 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   
+  <!-- Favicon (Pixel Wheel Logo) -->
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}?v={{ v }}">
+  <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='favicon.png') }}?v={{ v }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.png') }}?v={{ v }}">
+
   <!-- Main Stylesheet (with cache-busting) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ v }}">
 </head>
