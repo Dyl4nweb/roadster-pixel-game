@@ -518,6 +518,9 @@
       // Main Loop
       this.lastTime = performance.now();
       requestAnimationFrame((t) => this.gameLoop(t));
+
+      // Auto-start immediately into 3D gameplay so road, car, & HUD are 100% visible on load
+      this.startGame();
     }
 
     // --- THREE.JS INITIALIZATION ---
@@ -531,6 +534,7 @@
       // 2. Camera (Third-person theater widescreen chase camera)
       this.camera = new THREE.PerspectiveCamera(56, this.internalRes.w / this.internalRes.h, 0.1, 400);
       this.camera.position.set(0, 3.6, 8.2);
+      this.camera.lookAt(0, 1.2, -12);
 
       // 3. Crisp High-Performance Retro Arcade WebGL Renderer (No MSAA cost, silky 60 FPS)
       this.renderer = new THREE.WebGLRenderer({
@@ -1694,40 +1698,91 @@
       };
     }
 
-    // --- CAR PREVIEW 3D CANVAS ---
+    // --- CAR PREVIEW 3D CANVAS (Safe Try-Catch Protected) ---
     initCarPreview() {
-      this.previewScene = new THREE.Scene();
-      this.previewScene.background = new THREE.Color(0x161926);
+      try {
+        if (!this.previewCanvas) return;
+        this.previewScene = new THREE.Scene();
+        this.previewScene.background = new THREE.Color(0x161926);
 
-      this.previewCamera = new THREE.PerspectiveCamera(50, 160 / 110, 0.1, 50);
-      this.previewCamera.position.set(2.8, 2.2, 3.8);
-      this.previewCamera.lookAt(0, 0.5, 0);
+        this.previewCamera = new THREE.PerspectiveCamera(50, 160 / 110, 0.1, 50);
+        this.previewCamera.position.set(2.8, 2.2, 3.8);
+        this.previewCamera.lookAt(0, 0.5, 0);
 
-      this.previewRenderer = new THREE.WebGLRenderer({
-        canvas: this.previewCanvas,
-        antialias: true
-      });
-      this.previewRenderer.setSize(160, 110, false);
+        this.previewRenderer = new THREE.WebGLRenderer({
+          canvas: this.previewCanvas,
+          antialias: true
+        });
+        this.previewRenderer.setSize(160, 110, false);
 
-      const pLight = new THREE.DirectionalLight(0xffffff, 1.2);
-      pLight.position.set(5, 8, 5);
-      this.previewScene.add(pLight);
-      this.previewScene.add(new THREE.AmbientLight(0xffffff, 0.7));
+        const pLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        pLight.position.set(5, 8, 5);
+        this.previewScene.add(pLight);
+        this.previewScene.add(new THREE.AmbientLight(0xffffff, 0.7));
 
-      this.updatePreviewCar();
+        this.updatePreviewCar();
+      } catch (err) {
+        console.warn('Car preview canvas initialized in minimal mode:', err);
+      }
     }
 
     updatePreviewCar() {
-      if (this.previewCarMesh) {
-        this.previewScene.remove(this.previewCarMesh);
+      try {
+        if (!this.previewScene) return;
+        if (this.previewCarMesh) {
+          this.previewScene.remove(this.previewCarMesh);
+        }
+        this.previewCarMesh = this.createRoadsterModel(this.selectedColor);
+        this.previewScene.add(this.previewCarMesh);
+      } catch (err) {}
+    }
+
+    cycleCarColor() {
+      const colorKeys = ['white', 'silver', 'red', 'blue', 'gold'];
+      const currentIdx = colorKeys.indexOf(this.selectedColor);
+      const nextIdx = (currentIdx + 1) % colorKeys.length;
+      this.setCarColor(colorKeys[nextIdx]);
+    }
+
+    setCarColor(colorKey) {
+      this.selectedColor = colorKey;
+      const theme = CAR_COLORS[colorKey] || CAR_COLORS.white;
+
+      // Update 3D player Roadster in real-time on the road
+      if (this.playerCar && this.scene) {
+        const oldPos = this.playerCar.position.clone();
+        const oldRot = this.playerCar.rotation.clone();
+        this.scene.remove(this.playerCar);
+        this.playerCar = this.createRoadsterModel(this.selectedColor);
+        this.playerCar.position.copy(oldPos);
+        this.playerCar.rotation.copy(oldRot);
+        this.scene.add(this.playerCar);
       }
-      this.previewCarMesh = this.createRoadsterModel(this.selectedColor);
-      this.previewScene.add(this.previewCarMesh);
+
+      this.updatePreviewCar();
+
+      const colorBtnLabel = document.getElementById('colorBtnLabel');
+      if (colorBtnLabel) {
+        colorBtnLabel.textContent = `COLOR: ${theme.name.toUpperCase()}`;
+      }
+
+      document.querySelectorAll('.color-btn').forEach((b) => {
+        if (b.dataset.color === colorKey) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+
+      this.showToast(`[PAINT] ${theme.name.toUpperCase()} APPLIED!`, 1000);
     }
 
     // --- CONTROLS & EVENTS ---
     initEvents() {
       window.addEventListener('keydown', (e) => {
+        if (this.state === 'TITLE' && (e.code === 'Space' || e.code === 'Enter')) {
+          this.sound.init();
+          this.startGame();
+          e.preventDefault();
+          return;
+        }
         if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.keys.left = true;
         if (e.code === 'ArrowRight' || e.code === 'KeyD') this.keys.right = true;
         if (e.code === 'ArrowUp' || e.code === 'KeyW') this.keys.up = true;
@@ -1834,20 +1889,19 @@
         this.camera.updateProjectionMatrix();
       });
 
+      // Quick Cycle Roadster Color Button in Header
+      const colorToggleBtn = document.getElementById('colorToggleBtn');
+      if (colorToggleBtn) {
+        colorToggleBtn.addEventListener('click', () => {
+          this.cycleCarColor();
+        });
+      }
+
       // Color picker buttons
       const colorBtns = document.querySelectorAll('.color-btn');
       colorBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
-          colorBtns.forEach((b) => b.classList.remove('active'));
-          btn.classList.add('active');
-          this.selectedColor = btn.dataset.color;
-          this.updatePreviewCar();
-          // Update player car if exists
-          if (this.playerCar) {
-            this.scene.remove(this.playerCar);
-            this.playerCar = this.createRoadsterModel(this.selectedColor);
-            this.scene.add(this.playerCar);
-          }
+          this.setCarColor(btn.dataset.color);
         });
       });
 
@@ -2270,9 +2324,11 @@
       }
 
       // Rotate preview car in Title Screen
-      if (this.state === 'TITLE' && this.previewCarMesh) {
-        this.previewCarMesh.rotation.y += 0.015;
-        this.previewRenderer.render(this.previewScene, this.previewCamera);
+      if (this.state === 'TITLE' && this.previewCarMesh && this.previewRenderer && this.previewScene) {
+        try {
+          this.previewCarMesh.rotation.y += 0.015;
+          this.previewRenderer.render(this.previewScene, this.previewCamera);
+        } catch (e) {}
       }
 
       // Render 3D Scene

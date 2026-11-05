@@ -30,6 +30,10 @@
         <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
       </h1>
       <div class="header-controls">
+        <button id="colorToggleBtn" class="pixel-mini-btn" title="Cycle Roadster Color">
+          <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.64 10.58 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z" fill="currentColor"/></svg>
+          <span class="btn-label" id="colorBtnLabel">COLOR: WHITE</span>
+        </button>
         <button id="resToggleBtn" class="pixel-mini-btn" title="Toggle 3D Pixel Resolution">
           <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M3 3h4v4H3zm6 0h4v4H9zm6 0h4v4h-4zm0 6h4v4h-4zm-6 0h4v4H9zm-6 0h4v4H3zm0 6h4v4H3zm6 0h4v4H9zm6 0h4v4h-4z" fill="currentColor"/></svg>
           <span class="btn-label">RES: RETRO (360p)</span>
@@ -140,21 +144,40 @@
         </div>
       </div>
 
-      <!-- TITLE SCREEN OVERLAY -->
-      <div class="screen-modal active" id="titleModal">
+      <!-- TITLE SCREEN OVERLAY (Modal starts hidden; game autostarts for immediate 3D play) -->
+      <div class="screen-modal" id="titleModal">
         <div class="title-content">
           <div class="pixel-badge">PROJECT ROADSTER &bull; TESLA COLD-GAS HYPERCAR</div>
 
           <!-- White Tesla Roadster Emblem Badge -->
-          <div class="title-tesla-perch" style="margin-bottom: -16px; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.7));">
-            <img src="{{ url_for('static', filename='images/pixel_white_tesla_roadster.png') }}" alt="White Tesla Roadster" style="width: 220px; height: auto; image-rendering: pixelated; display: inline-block;">
+          <div class="title-tesla-perch" style="margin-bottom: -10px; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.7));">
+            <img src="{{ url_for('static', filename='images/pixel_white_tesla_roadster.png') }}" alt="White Tesla Roadster" style="width: 200px; height: auto; image-rendering: pixelated; display: inline-block;">
           </div>
 
           <h1 class="main-title">..ROADSTER<br><span class="highlight-title">オートレース 3D RACER</span></h1>
           <p class="subtitle">Next-Gen Tesla Rocket Thruster Supercar on NLEX Cyber Expressway</p>
+
+          <!-- Immediate Launch Race Button -->
+          <button id="startGameBtn" class="pixel-btn play-btn pulse-anim" style="font-size: 11px; padding: 10px 22px; width: 100%; max-width: 420px; margin: 4px 0;">
+            <svg class="game-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            LAUNCH ROADSTER MISSION (START RACE)
+          </button>
+          
+          <!-- Controls Help -->
+          <div class="controls-guide" style="width: 100%; max-width: 420px;">
+            <div class="control-col">
+              <span class="key-cap">A</span> <span class="key-cap">D</span> or <span class="key-cap">&#9664;</span> <span class="key-cap">&#9654;</span> Steer
+            </div>
+            <div class="control-col">
+              <span class="key-cap">W</span> Throttle &bull; <span class="key-cap">S</span> Brake
+            </div>
+            <div class="control-col">
+              <span class="key-cap">SHIFT</span> Nitro &bull; <span class="key-cap">SPACE</span> 360&deg; Jump (Slipstream)
+            </div>
+          </div>
           
           <!-- Roadster Concept Context Card -->
-          <div class="roadster-concept-card">
+          <div class="roadster-concept-card" style="width: 100%; max-width: 420px;">
             <div class="concept-badge">
               <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/></svg>
               <span>WHY THE ROADSTER? CONCEPT BRIEFING</span>
@@ -165,7 +188,7 @@
           </div>
 
           <!-- Car Preview Showcase -->
-          <div class="car-preview-box">
+          <div class="car-preview-box" style="width: 100%; max-width: 420px;">
             <canvas id="carPreviewCanvas" width="160" height="110"></canvas>
             <div class="color-picker-label">CUSTOMIZE YOUR ROADSTER FINISH:</div>
             <div class="color-options">
@@ -188,7 +211,7 @@
           </div>
 
           <!-- Expressway Stage Highlights -->
-          <div class="route-preview">
+          <div class="route-preview" style="width: 100%; max-width: 420px;">
             <div class="route-step">
               <svg class="game-icon sm neon-cyan" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-3.79l-2.6 1.5-1-1.73L10 11.02V8h2v3.02l2.6 1.46-1 1.73-2.6-1.5v3.79h-1z" fill="currentColor"/></svg>
               1. Balintawak Toll Plaza
@@ -206,24 +229,6 @@
               4. Clark Cyber Metropolis
             </div>
           </div>
-
-          <!-- Controls Help -->
-          <div class="controls-guide">
-            <div class="control-col">
-              <span class="key-cap">A</span> <span class="key-cap">D</span> or <span class="key-cap">&#9664;</span> <span class="key-cap">&#9654;</span> Steer
-            </div>
-            <div class="control-col">
-              <span class="key-cap">W</span> Throttle &bull; <span class="key-cap">S</span> Brake
-            </div>
-            <div class="control-col">
-              <span class="key-cap">SHIFT</span> Nitro &bull; <span class="key-cap">SPACE</span> 360&deg; Jump (Slipstream)
-            </div>
-          </div>
-
-          <button id="startGameBtn" class="pixel-btn play-btn pulse-anim">
-            <svg class="game-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
-            LAUNCH ROADSTER MISSION (START RACE)
-          </button>
           
           <button id="openVideoBtn" class="pixel-btn outline-btn" style="font-size:8px; padding:6px 14px; margin-top:2px; cursor: pointer;">
             <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M12 2.5s-4 4-4 9.5c0 3.5 2 6 4 7 2-1 4-3.5 4-7 0-5.5-4-9.5-4-9.5zm-5 13.5c-1.5 1-2.5 3-2.5 5 2 0 4-1 5-2.5-1-1-1.8-1.8-2.5-2.5zm10 0c-.7.7-1.5 1.5-2.5 2.5 1 1.5 3 2.5 5 2.5 0-2-1-4-2.5-5z" fill="currentColor"/></svg>
