@@ -947,7 +947,9 @@ html, body {
 /* Pilot Callsign Score Submission Card */
 .submit-score-card {
   width: 100%;
-  background: rgba(14, 18, 30, 0.95);
+  box-sizing: border-box;
+  overflow: hidden;
+  background: rgba(12, 16, 28, 0.95);
   border: 1px solid var(--neon-cyan);
   border-radius: 6px;
   padding: 8px 10px;
@@ -970,58 +972,81 @@ html, body {
   display: flex;
   gap: 6px;
   width: 100%;
+  box-sizing: border-box;
+  align-items: stretch;
 }
 
 .callsign-input {
-  flex: 1;
-  background: #090a10;
-  border: 1px solid #414a60;
+  flex: 1 1 0%;
+  min-width: 0 !important;
+  width: 0;
+  height: 32px;
+  background: #080a12;
+  border: 1px solid #3b4252;
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 0 10px;
   font-family: var(--font-pixel);
   font-size: 9px;
-  color: #ffffff;
+  color: #00f0ff;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
   outline: none;
+  box-sizing: border-box;
   transition: all 0.2s ease;
 }
 
 .callsign-input:focus {
   border-color: var(--neon-cyan);
+  background: #0d1220;
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
 }
 
 .callsign-input::placeholder {
-  color: #57627e;
+  color: #4c566a;
   font-size: 7px;
 }
 
 .submit-score-btn {
-  background: linear-gradient(135deg, #00f0ff 0%, #0088cc 100%);
-  color: #000 !important;
+  flex-shrink: 0;
+  height: 32px;
+  background: linear-gradient(180deg, #00f0ff 0%, #0088cc 100%);
+  color: #050b14 !important;
   font-family: var(--font-pixel);
   font-size: 8px !important;
   font-weight: 700;
-  padding: 6px 12px !important;
-  border: none;
+  padding: 0 12px !important;
+  border: 1px solid #7df9ff !important;
   border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 5px;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  box-sizing: border-box;
+  box-shadow: 0 2px 0 #004d73, 0 0 10px rgba(0, 240, 255, 0.35);
+  text-shadow: none !important;
+  transition: all 0.1s ease;
 }
 
 .submit-score-btn:hover {
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
+  background: linear-gradient(180deg, #33f3ff 0%, #009de0 100%);
+  box-shadow: 0 3px 0 #004d73, 0 0 14px rgba(0, 240, 255, 0.65);
   transform: translateY(-1px);
 }
 
+.submit-score-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #004d73, inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
 .submit-score-btn:disabled {
-  opacity: 0.6;
+  background: #252d3d !important;
+  color: #707b94 !important;
+  border-color: #3b4455 !important;
+  box-shadow: none !important;
   cursor: not-allowed;
-  transform: none;
+  transform: none !important;
 }
 
 .submit-feedback {
