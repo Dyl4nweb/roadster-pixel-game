@@ -1,0 +1,65 @@
+[
+  {
+    "rank": 1,
+    "driver": "PILOT_VIRAY",
+    "score": 94850,
+    "distance_km": 6.25,
+    "top_speed": 240,
+    "stage": "Pangasinan Coast",
+    "date": "2026-10-19"
+  },
+  {
+    "rank": 2,
+    "driver": "NLEX_VIPER",
+    "score": 82400,
+    "distance_km": 5.12,
+    "top_speed": 235,
+    "stage": "Clark Subic Skyway",
+    "date": "2026-10-18"
+  },
+  {
+    "driver": "TEST_PILOT",
+    "score": 77777,
+    "distance_km": 4.5,
+    "top_speed": 220,
+    "stage": "Stage 3",
+    "date": "2026-10-19",
+    "rank": 3
+  },
+  {
+    "rank": 4,
+    "driver": "CYBER_ROADSTER",
+    "score": 68243,
+    "distance_km": 3.8,
+    "top_speed": 215,
+    "stage": "San Fernando Tollway",
+    "date": "2026-10-18"
+  },
+  {
+    "rank": 5,
+    "driver": "HYPER_STORM",
+    "score": 54100,
+    "distance_km": 3.2,
+    "top_speed": 198,
+    "stage": "San Fernando Tollway",
+    "date": "2026-10-17"
+  },
+  {
+    "rank": 6,
+    "driver": "ROOKIE_PILOT",
+    "score": 38500,
+    "distance_km": 2.45,
+    "top_speed": 180,
+    "stage": "Balintawak Entry",
+    "date": "2026-10-16"
+  },
+  {
+    "driver": "PILOT_01",
+    "score": 17014,
+    "distance_km": 1.4,
+    "top_speed": 263,
+    "stage": "BALINTAWAK TOLL PLAZA",
+    "date": "2026-11-05",
+    "rank": 7
+  }
+]
