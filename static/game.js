@@ -540,12 +540,28 @@
       this.camera.lookAt(0, 1.2, -12);
 
       // 3. Crisp High-Performance Retro Arcade WebGL Renderer (No MSAA cost, silky 60 FPS)
-      this.renderer = new THREE.WebGLRenderer({
-        canvas: this.canvas,
-        antialias: false,
-        powerPreference: 'high-performance'
-      });
+      try {
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          antialias: false,
+          powerPreference: 'default'
+        });
+      } catch (err) {
+        console.warn('Primary WebGL creation failed, trying fallback WebGLRenderer:', err);
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+      }
       this.renderer.setSize(this.internalRes.w, this.internalRes.h, false);
+
+      if (this.canvas) {
+        this.canvas.addEventListener('webglcontextlost', (e) => {
+          e.preventDefault();
+          console.warn('WebGL Context Lost! Pausing rendering loop...');
+        }, false);
+        this.canvas.addEventListener('webglcontextrestored', () => {
+          console.log('WebGL Context Restored! Rebuilding 3D scene...');
+          this.initThree();
+        }, false);
+      }
 
       // 4. Lighting
       this.ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
@@ -633,14 +649,14 @@
       grassTex.repeat.set(8, 20);
 
       return {
-        asphalt: new THREE.MeshLambertMaterial({ map: asphaltTex, flatShading: true }),
-        grass: new THREE.MeshLambertMaterial({ map: grassTex, flatShading: true }),
-        dirt: new THREE.MeshLambertMaterial({ color: 0x6d4c41, flatShading: true }),
+        asphalt: new THREE.MeshLambertMaterial({ map: asphaltTex }),
+        grass: new THREE.MeshLambertMaterial({ map: grassTex }),
+        dirt: new THREE.MeshLambertMaterial({ color: 0x6d4c41 }),
         curbRed: new THREE.MeshBasicMaterial({ color: 0xd32f2f }),
         curbWhite: new THREE.MeshBasicMaterial({ color: 0xffffff }),
         stripeYellow: new THREE.MeshBasicMaterial({ color: 0xf1c40f }),
         stripeWhite: new THREE.MeshBasicMaterial({ color: 0xffffff }),
-        water: new THREE.MeshLambertMaterial({ color: 0x0288d1, flatShading: true })
+        water: new THREE.MeshLambertMaterial({ color: 0x0288d1 })
       };
     }
 
@@ -1704,7 +1720,7 @@
     // --- CAR PREVIEW 3D CANVAS (Safe Try-Catch Protected) ---
     initCarPreview() {
       try {
-        if (!this.previewCanvas) return;
+        if (!this.previewCanvas || this.previewCanvas.style.display === 'none' || this.previewCanvas.width <= 1) return;
         this.previewScene = new THREE.Scene();
         this.previewScene.background = new THREE.Color(0x161926);
 
@@ -1817,36 +1833,52 @@
         if (e.code === 'Space') this.keys.jump = false;
       });
 
-      document.getElementById('startGameBtn').addEventListener('click', () => {
-        this.sound.init();
-        this.startGame();
-      });
+      const startBtn = document.getElementById('startGameBtn');
+      if (startBtn) {
+        startBtn.addEventListener('click', () => {
+          this.sound.init();
+          this.startGame();
+        });
+      }
 
-      document.getElementById('restartGameBtn').addEventListener('click', () => {
-        this.startGame();
-      });
+      const restartBtn = document.getElementById('restartGameBtn');
+      if (restartBtn) {
+        restartBtn.addEventListener('click', () => {
+          this.startGame();
+        });
+      }
 
-      document.getElementById('mainMenuBtn').addEventListener('click', () => {
-        this.showTitleScreen();
-      });
+      const mainMenuBtn = document.getElementById('mainMenuBtn');
+      if (mainMenuBtn) {
+        mainMenuBtn.addEventListener('click', () => {
+          this.showTitleScreen();
+        });
+      }
 
-      document.getElementById('resumeBtn').addEventListener('click', () => {
-        this.resumeGame();
-      });
+      const resumeBtn = document.getElementById('resumeBtn');
+      if (resumeBtn) {
+        resumeBtn.addEventListener('click', () => {
+          this.resumeGame();
+        });
+      }
 
       const soundBtn = document.getElementById('soundToggleBtn');
-      soundBtn.addEventListener('click', () => {
-        this.sound.init();
-        const muted = this.sound.toggleMute();
-        soundBtn.innerHTML = muted ? `${ICONS.soundOff} <span class="btn-label">SFX OFF</span>` : `${ICONS.soundOn} <span class="btn-label">SFX ON</span>`;
-      });
+      if (soundBtn) {
+        soundBtn.addEventListener('click', () => {
+          this.sound.init();
+          const muted = this.sound.toggleMute();
+          soundBtn.innerHTML = muted ? `${ICONS.soundOff} <span class="btn-label">SFX OFF</span>` : `${ICONS.soundOn} <span class="btn-label">SFX ON</span>`;
+        });
+      }
 
       const crtBtn = document.getElementById('crtToggleBtn');
-      crtBtn.addEventListener('click', () => {
-        this.crtOverlay.classList.toggle('active');
-        const isActive = this.crtOverlay.classList.contains('active');
-        crtBtn.innerHTML = `${ICONS.crt} <span class="btn-label">CRT ${isActive ? 'ON' : 'OFF'}</span>`;
-      });
+      if (crtBtn) {
+        crtBtn.addEventListener('click', () => {
+          if (this.crtOverlay) this.crtOverlay.classList.toggle('active');
+          const isActive = this.crtOverlay && this.crtOverlay.classList.contains('active');
+          crtBtn.innerHTML = `${ICONS.crt} <span class="btn-label">CRT ${isActive ? 'ON' : 'OFF'}</span>`;
+        });
+      }
 
       // Thruster Video Modal Events
       const videoModal = document.getElementById('videoModal');
@@ -1877,20 +1909,24 @@
 
       // Resolution Toggle Button (16:9 Widescreen Toggle)
       const resBtn = document.getElementById('resToggleBtn');
-      resBtn.addEventListener('click', () => {
-        if (this.pixelMode === 'LO') {
-          this.pixelMode = 'HI';
-          this.internalRes = { w: 960, h: 540 };
-          resBtn.innerHTML = `${ICONS.pixel} <span class="btn-label">RES: CRISP (540p)</span>`;
-        } else {
-          this.pixelMode = 'LO';
-          this.internalRes = { w: 640, h: 360 };
-          resBtn.innerHTML = `${ICONS.pixel} <span class="btn-label">RES: RETRO (360p)</span>`;
-        }
-        this.renderer.setSize(this.internalRes.w, this.internalRes.h, false);
-        this.camera.aspect = this.internalRes.w / this.internalRes.h;
-        this.camera.updateProjectionMatrix();
-      });
+      if (resBtn) {
+        resBtn.addEventListener('click', () => {
+          if (this.pixelMode === 'LO') {
+            this.pixelMode = 'HI';
+            this.internalRes = { w: 960, h: 540 };
+            resBtn.innerHTML = `${ICONS.pixel} <span class="btn-label">RES: CRISP (540p)</span>`;
+          } else {
+            this.pixelMode = 'LO';
+            this.internalRes = { w: 640, h: 360 };
+            resBtn.innerHTML = `${ICONS.pixel} <span class="btn-label">RES: RETRO (360p)</span>`;
+          }
+          if (this.renderer) this.renderer.setSize(this.internalRes.w, this.internalRes.h, false);
+          if (this.camera) {
+            this.camera.aspect = this.internalRes.w / this.internalRes.h;
+            this.camera.updateProjectionMatrix();
+          }
+        });
+      }
 
       // Quick Cycle Roadster Color Button in Header
       const colorToggleBtn = document.getElementById('colorToggleBtn');
@@ -2308,35 +2344,53 @@
     }
 
     applyCheckpointAtmosphere(cp) {
-      this.scene.background.set(cp.skyColor);
-      this.scene.fog.color.set(cp.fogColor);
-      this.scene.fog.density = cp.fogDensity;
-      this.sunLight.color.set(cp.lightColor);
-      this.materials.grass.color.set(cp.grassColor);
-      this.materials.asphalt.color.set(cp.roadColor);
-      this.materials.stripeYellow.color.set(cp.stripeColor);
+      if (!cp) return;
+      if (this.scene) {
+        if (!this.scene.background || typeof this.scene.background.set !== 'function') {
+          this.scene.background = new THREE.Color(cp.skyColor);
+        } else {
+          this.scene.background.set(cp.skyColor);
+        }
+        if (this.scene.fog && this.scene.fog.color) {
+          this.scene.fog.color.set(cp.fogColor);
+          this.scene.fog.density = cp.fogDensity;
+        }
+      }
+      if (this.sunLight && this.sunLight.color) {
+        this.sunLight.color.set(cp.lightColor);
+      }
+      if (this.materials) {
+        if (this.materials.grass && this.materials.grass.color) this.materials.grass.color.set(cp.grassColor);
+        if (this.materials.asphalt && this.materials.asphalt.color) this.materials.asphalt.color.set(cp.roadColor);
+        if (this.materials.stripeYellow && this.materials.stripeYellow.color) this.materials.stripeYellow.color.set(cp.stripeColor);
+      }
     }
 
     // --- GAME LOOP & UPDATES ---
     gameLoop(timestamp) {
+      this.animFrameId = requestAnimationFrame((t) => this.gameLoop(t));
+
       const dt = Math.min((timestamp - this.lastTime) / 1000, 0.1);
       this.lastTime = timestamp;
 
-      if (this.state === 'PLAYING') {
-        this.update(dt);
-      }
+      try {
+        if (this.state === 'PLAYING') {
+          this.update(dt);
+        }
 
-      // Rotate preview car in Title Screen
-      if (this.state === 'TITLE' && this.previewCarMesh && this.previewRenderer && this.previewScene) {
-        try {
-          this.previewCarMesh.rotation.y += 0.015;
-          this.previewRenderer.render(this.previewScene, this.previewCamera);
-        } catch (e) {}
-      }
+        // Rotate preview car in Title Screen if active
+        if (this.state === 'TITLE' && this.previewCarMesh && this.previewRenderer && this.previewScene) {
+          try {
+            this.previewCarMesh.rotation.y += 0.015;
+            this.previewRenderer.render(this.previewScene, this.previewCamera);
+          } catch (e) {}
+        }
 
-      // Render 3D Scene
-      this.render();
-      requestAnimationFrame((t) => this.gameLoop(t));
+        // Render 3D Scene
+        this.render();
+      } catch (err) {
+        console.error('Runtime error in gameLoop:', err);
+      }
     }
 
     update(dt) {
@@ -3269,11 +3323,15 @@
 
     // --- RENDER ---
     render() {
+      if (!this.renderer || !this.scene || !this.camera) return;
+
       // Invulnerability flicker
-      if (this.player.invulnerableTimer > 0) {
-        this.playerCar.visible = Math.floor(this.player.invulnerableTimer * 14) % 2 === 0;
-      } else {
-        this.playerCar.visible = true;
+      if (this.player && this.playerCar) {
+        if (this.player.invulnerableTimer > 0) {
+          this.playerCar.visible = Math.floor(this.player.invulnerableTimer * 14) % 2 === 0;
+        } else {
+          this.playerCar.visible = true;
+        }
       }
 
       this.renderer.render(this.scene, this.camera);
