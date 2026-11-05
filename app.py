@@ -153,15 +153,38 @@ def add_no_cache_headers(response):
     response.headers['Expires'] = '0'
     return response
 
+def is_mobile_request(req):
+    """Detect if incoming request is from a mobile device or phone browser."""
+    user_agent = req.headers.get('User-Agent', '').lower()
+    mobile_keywords = [
+        'android', 'iphone', 'ipod', 'mobile',
+        'blackberry', 'iemobile', 'kindle', 'silk', 'opera mini',
+        'windows phone'
+    ]
+    for kw in mobile_keywords:
+        if kw in user_agent:
+            return True
+    return False
+
 @app.route('/')
 def home():
     """Render the official Roadster 3D Cyber Skyway Home Page and Leaderboard."""
     board = load_leaderboard()
     return render_template('home.html', v=int(time.time()), leaderboard=board)
 
+@app.route('/mobile')
+@app.route('/mobile-blocked')
+@app.route('/desktop-only')
+def desktop_only():
+    """Page shown when a mobile device attempts to access the desktop-only 3D game."""
+    return render_template('mobile_blocked.html', v=int(time.time()))
+
 @app.route('/play')
 def play():
-    """Render the main 3D retro arcade game screen."""
+    """Render the main 3D retro arcade game screen (desktop optimized)."""
+    # If mobile device detected and not explicitly forced, redirect to desktop-only notice
+    if request.args.get('force') != 'true' and is_mobile_request(request):
+        return redirect(url_for('desktop_only'))
     return render_template('index.html', v=int(time.time()))
 
 @app.route('/game')

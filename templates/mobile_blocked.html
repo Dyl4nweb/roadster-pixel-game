@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DESKTOP ONLY • Roadster 3D: NLEX Cyber Skyway</title>
+  
+  <meta name="description" content="Roadster 3D: NLEX Cyber Skyway is optimized for desktop PC web browsers with physical keyboards.">
+  <meta name="theme-color" content="#0d0e15">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --neon-cyan: #00f0ff;
+      --neon-pink: #ff007f;
+      --neon-gold: #ffbe0b;
+      --arcade-gold: #f8b800;
+      --hazard-yellow: #ffcc00;
+      --font-pixel: 'Press Start 2P', monospace, sans-serif;
+      --font-display: 'VT323', monospace, sans-serif;
+      --font-sans: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #090a10;
+      color: #ffffff;
+      font-family: var(--font-sans);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Cyber Background */
+    .bg-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(16, 24, 48, 0.85) 0%, rgba(9, 10, 16, 0.98) 100%),
+                  url("{{ url_for('static', filename='images/nlex_cyber_bg.jpg') }}?v={{ v }}") center/cover no-repeat;
+      filter: blur(8px) brightness(0.4);
+      z-index: 0;
+      transform: scale(1.05);
+    }
+
+    .cyber-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Central Arcade Terminal Shell */
+    .terminal-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(14, 18, 30, 0.95);
+      border: 2px solid var(--neon-cyan);
+      border-radius: 12px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+    }
+
+    /* Hazard Warning Strip */
+    .hazard-stripe {
+      width: 100%;
+      height: 6px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #ffcc00,
+        #ffcc00 10px,
+        #111111 10px,
+        #111111 20px
+      );
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    /* Device Icon Indicator */
+    .device-icon-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .device-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .device-badge.mobile-denied {
+      background: rgba(255, 0, 85, 0.15);
+      border: 2px solid #ff0055;
+      color: #ff0055;
+      box-shadow: 0 0 14px rgba(255, 0, 85, 0.4);
+    }
+
+    .device-badge.mobile-denied::after {
+      content: '✕';
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 20px;
+      height: 20px;
+      background: #ff0055;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 8px #ff0055;
+    }
+
+    .device-arrow {
+      color: var(--neon-cyan);
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .device-badge.desktop-req {
+      background: rgba(0, 240, 255, 0.15);
+      border: 2px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.4);
+      animation: deskPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes deskPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(0, 240, 255, 0.4); }
+      50% { transform: scale(1.06); box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
+    }
+
+    /* Warning Titles */
+    .warning-badge {
+      font-family: var(--font-pixel);
+      font-size: 9px;
+      color: var(--hazard-yellow);
+      background: rgba(255, 204, 0, 0.12);
+      border: 1px solid rgba(255, 204, 0, 0.4);
+      padding: 4px 10px;
+      border-radius: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .main-title {
+      font-family: var(--font-pixel);
+      font-size: clamp(14px, 4.2vw, 17px);
+      line-height: 1.4;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+      margin-bottom: 6px;
+    }
+
+    .subtitle-fil {
+      font-family: var(--font-pixel);
+      font-size: 10px;
+      color: #ff007f;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+    }
+
+    /* Explanation Box */
+    .reason-box {
+      background: rgba(8, 10, 18, 0.85);
+      border: 1px solid #23293d;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 20px;
+      text-align: left;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #cbd5e1;
+    }
+
+    .reason-box p {
+      margin-bottom: 10px;
+    }
+
+    .reason-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .key-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      font-size: 11px;
+    }
+
+    .key-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .key-badge {
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      background: #1e2538;
+      color: var(--neon-cyan);
+      border: 1px solid #3d4a6b;
+      padding: 2px 6px;
+      border-radius: 3px;
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* Action Buttons */
+    .btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 6px;
+      font-family: var(--font-pixel);
+      font-size: 9px;
+      letter-spacing: 0.8px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #ff007f 0%, #aa0055 100%);
+      color: #fff;
+      border: 1px solid #ffd1e8;
+      box-shadow: 0 4px 0 #660033, 0 0 12px rgba(255, 0, 127, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #660033;
+    }
+
+    .btn-secondary {
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 3px 0 rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-copy {
+      background: rgba(255, 204, 0, 0.12);
+      color: var(--arcade-gold);
+      border: 1px solid rgba(255, 204, 0, 0.5);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #64748b;
+      font-size: 8px;
+      padding: 6px;
+    }
+
+    .btn-ghost:hover {
+      color: #94a3b8;
+    }
+
+    /* Feedback Banner */
+    .copy-toast {
+      display: none;
+      font-size: 11px;
+      color: var(--neon-green);
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    /* Footer Attribution */
+    .footer-credit {
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--arcade-gold);
+      font-weight: 700;
+      letter-spacing: 0.8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-backdrop"></div>
+  <div class="cyber-grid"></div>
+
+  <main class="terminal-card">
+    <div class="hazard-stripe"></div>
+
+    <!-- Mobile Denied -> Desktop Required Visual -->
+    <div class="device-icon-group">
+      <div class="device-badge mobile-denied" title="Mobile Phone Not Supported">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
+        </svg>
+      </div>
+      <span class="device-arrow">&rarr;</span>
+      <div class="device-badge desktop-req" title="Desktop / PC Web Browser Required">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="warning-badge">⚠️ SYSTEM NOTICE</div>
+    <h1 class="main-title">DESKTOP WEB BROWSER ONLY</h1>
+    <div class="subtitle-fil">HINDI PUWEDE SA MOBILE PHONE</div>
+
+    <div class="reason-box">
+      <p>
+        Ang <strong>Roadster 3D: NLEX Cyber Skyway</strong> ay binuo para sa <strong>Desktop PC &amp; Laptop</strong> gamit ang physical keyboard controls at 16:9 widescreen 3D WebGL engine.
+      </p>
+      <div class="key-list">
+        <div class="key-item">
+          <span class="key-badge">A / D</span>
+          <span>Steering at lane switching</span>
+        </div>
+        <div class="key-item">
+          <span class="key-badge">W / S</span>
+          <span>Throttle at preno</span>
+        </div>
+        <div class="key-item">
+          <span class="key-badge">SHIFT</span>
+          <span>Supersonic Nitro Boost (240 KPH)</span>
+        </div>
+        <div class="key-item">
+          <span class="key-badge">SPACE</span>
+          <span>360° Cold-Gas Jump over 18-wheelers</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-stack">
+      <a href="/" class="action-btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        PUMUNTA SA LEADERBOARD (HUB)
+      </a>
+
+      <button id="btnCopyGameLink" class="action-btn btn-copy" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        COPY LINK PARA SA PC
+      </button>
+
+      <a href="/thrusters" class="action-btn btn-secondary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        PANOORIN 9:16 MOBILE DEMO
+      </a>
+
+      <a href="/play?force=true" class="action-btn btn-ghost">
+        Magpatuloy pa rin (Desktop Mode on Tablet) &rarr;
+      </a>
+    </div>
+
+    <div class="copy-toast" id="copyToast">&#10003; Na-copy na ang link! Buksan ito sa iyong PC browser!</div>
+
+    <div class="footer-credit">
+      🎮 Dylan Ramos created this game
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('btnCopyGameLink').addEventListener('click', async () => {
+      const url = window.location.origin + '/play';
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = url;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        const toast = document.getElementById('copyToast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+      } catch (err) {
+        alert('Game URL: ' + url);
+      }
+    });
+  </script>
+</body>
+</html>
