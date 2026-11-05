@@ -446,8 +446,12 @@
       this.pixelMode = 'LO';
       this.internalRes = { w: 640, h: 360 };
 
-      // Selected Roadster Color (Default: Pearl White)
+      // Selected Roadster Color (Default: Pearl White or saved preference)
       this.selectedColor = 'white';
+      try {
+        const saved = localStorage.getItem('nlex_roadster_color');
+        if (saved && CAR_COLORS[saved]) this.selectedColor = saved;
+      } catch (e) {}
 
       // Player State
       this.player = {
@@ -511,6 +515,7 @@
       // Setup Three.js Systems
       this.initThree();
       this.initEvents();
+      this.setCarColor(this.selectedColor);
       this.initCarPreview();
       this.fetchServerHighScore();
       this.updateHud();
@@ -1767,7 +1772,19 @@
       this.selectedColor = colorKey;
       const theme = CAR_COLORS[colorKey] || CAR_COLORS.white;
 
-      // Update 3D player Roadster in real-time on the road
+      // 1. Instantly update 2D Roadster Badge Image on the Title Screen before entering!
+      const modalImg = document.getElementById('modalRoadsterImg');
+      if (modalImg) {
+        modalImg.src = `/static/images/pixel_${colorKey}_tesla_roadster.png`;
+        modalImg.alt = `${theme.name} Tesla Roadster`;
+      }
+
+      // 2. Persist chosen finish in localStorage
+      try {
+        localStorage.setItem('nlex_roadster_color', colorKey);
+      } catch (e) {}
+
+      // 3. Update 3D player Roadster in real-time in the 3D scene (on the road)
       if (this.playerCar && this.scene) {
         const oldPos = this.playerCar.position.clone();
         const oldRot = this.playerCar.rotation.clone();
@@ -1790,7 +1807,7 @@
         else b.classList.remove('active');
       });
 
-      this.showToast(`[PAINT] ${theme.name.toUpperCase()} APPLIED!`, 1000);
+      this.showToast(`[FINISH] ${theme.name.toUpperCase()} APPLIED!`, 1000);
     }
 
     // --- CONTROLS & EVENTS ---
