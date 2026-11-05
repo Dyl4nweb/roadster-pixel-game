@@ -8,3 +8,4 @@ if ROOT_DIR not in sys.path:
 
 # Expose WSGI app for Vercel Serverless Function
 from app import app
+

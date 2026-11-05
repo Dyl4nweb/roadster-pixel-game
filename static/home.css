@@ -262,7 +262,8 @@ body {
   image-rendering: crisp-edges;
 }
 
-/* Floating Sakura Canvas Layer */
+/* Floating NLEX Cyber Speed & Streetlight Particle Layer */
+.nlex-particle-layer,
 .sakura-canvas-layer {
   position: absolute;
   top: 0;
@@ -355,7 +356,40 @@ body {
     drop-shadow(0 16px 24px rgba(0, 0, 0, 0.9));
 }
 
-/* Japanese Katakana + Gold Arcade Subtitle */
+/* Philippine Flag & NLEX Expressway Badges */
+.ph-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  margin-bottom: 10px;
+  background: rgba(13, 20, 36, 0.88);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 20px;
+  font-family: var(--font-pixel);
+  font-size: clamp(8px, 1.3vw, 10px);
+  color: #ffd700;
+  letter-spacing: 1.2px;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+  animation: phBadgeGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes phBadgeGlow {
+  0%, 100% { border-color: rgba(0, 240, 255, 0.4); box-shadow: 0 0 12px rgba(0, 240, 255, 0.2); }
+  50% { border-color: rgba(255, 215, 0, 0.7); box-shadow: 0 0 18px rgba(255, 215, 0, 0.35); }
+}
+
+.ph-flag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.ph-flag-dot.blue { background: #0038a8; box-shadow: 0 0 8px #0038a8; }
+.ph-flag-dot.red { background: #ce1126; box-shadow: 0 0 8px #ce1126; }
+.ph-flag-dot.yellow { background: #fcd116; box-shadow: 0 0 8px #fcd116; }
+
+/* NLEX Expressway + Gold Arcade Subtitle */
 .pixel-subtitle-bar {
   display: flex;
   align-items: center;
@@ -364,11 +398,13 @@ body {
   margin-top: 6px;
 }
 
+.sub-ph,
 .sub-jp {
   font-family: var(--font-pixel);
-  font-size: clamp(13px, 2.3vw, 20px);
-  color: #ffffff;
-  text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 4px 0 #000;
+  font-size: clamp(12px, 2.3vw, 20px);
+  color: #00f0ff;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 4px 0 #000, 0 0 14px rgba(0, 240, 255, 0.6);
 }
 
 .sub-en {

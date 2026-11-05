@@ -52,13 +52,13 @@
   <!-- MAIN WRAPPER -->
   <main class="hub-main">
 
-    <!-- PIXEL CAR RACER INSPIRED HERO STAGE -->
+    <!-- NLEX CYBER SPEEDWAY HERO STAGE (AUTHENTIC PHILIPPINES) -->
     <section class="pixel-racer-stage">
-      <!-- 16-Bit Panoramic Japanese Highway Landscape Backdrop -->
+      <!-- 16-Bit Panoramic NLEX Candaba Viaduct & Mount Arayat Backdrop -->
       <div class="stage-backdrop-container">
-        <img src="{{ url_for('static', filename='images/pixel_racer_bg.jpg') }}" alt="Pixel Highway Landscape" class="stage-bg-image">
-        <!-- Floating Falling Sakura Canvas -->
-        <canvas id="sakuraCanvas" class="sakura-canvas-layer"></canvas>
+        <img src="{{ url_for('static', filename='images/nlex_cyber_bg.jpg') }}?v={{ v }}" alt="NLEX Philippine Expressway Landscape" class="stage-bg-image">
+        <!-- Floating Highway Amber Streetlights & Cyber Speed Particles -->
+        <canvas id="nlexParticleCanvas" class="nlex-particle-layer"></canvas>
       </div>
 
       <!-- Centerpiece Arcade Logo Marquee -->
@@ -69,12 +69,18 @@
           <img src="{{ url_for('static', filename='images/pixel_white_tesla_roadster.png') }}" alt="White Tesla Roadster Supercar" class="pixel-roadster-img">
         </div>
 
-        <!-- 3D Chrome Arcade Title & Japanese Subtitle Plate -->
+        <!-- 3D Chrome Arcade Title & NLEX Philippine Subtitle Plate -->
         <div class="pixel-title-box">
+          <div class="ph-banner-badge">
+            <span class="ph-flag-dot blue"></span>
+            <span class="ph-flag-dot red"></span>
+            <span class="ph-flag-dot yellow"></span>
+            <span>NORTH LUZON EXPRESSWAY &bull; PILIPINAS</span>
+          </div>
           <h1 class="pixel-chrome-title" data-text="..ROADSTER">..ROADSTER</h1>
           <div class="pixel-subtitle-bar">
-            <span class="sub-jp">オートレース</span>
-            <span class="sub-en">CAR RACER</span>
+            <span class="sub-ph">NLEX EXPRESSWAY</span>
+            <span class="sub-en">3D RACER</span>
           </div>
         </div>
 
@@ -396,7 +402,7 @@
     })();
   </script>
 
-  <!-- Sakura Petals Particle Engine -->
-  <script src="{{ url_for('static', filename='sakura.js') }}?v={{ v }}"></script>
+  <!-- NLEX Cyber Expressway Highway Particles -->
+  <script src="{{ url_for('static', filename='nlex_particles.js') }}?v={{ v }}"></script>
 </body>
 </html>
