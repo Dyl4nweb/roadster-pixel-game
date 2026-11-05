@@ -143,9 +143,15 @@
       <!-- TITLE SCREEN OVERLAY -->
       <div class="screen-modal active" id="titleModal">
         <div class="title-content">
-          <div class="pixel-badge">PROJECT ROADSTER &bull; COLD-GAS THRUSTER SUPERCAR</div>
-          <h1 class="main-title">ROADSTER<br><span class="highlight-title">3D ARCADE</span></h1>
-          <p class="subtitle">Next-Gen Rocket Thruster Supercar on NLEX Cyber Expressway</p>
+          <div class="pixel-badge">PROJECT ROADSTER &bull; TESLA COLD-GAS HYPERCAR</div>
+
+          <!-- White Tesla Roadster Emblem Badge -->
+          <div class="title-tesla-perch" style="margin-bottom: -16px; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.7));">
+            <img src="{{ url_for('static', filename='images/pixel_white_tesla_roadster.png') }}" alt="White Tesla Roadster" style="width: 220px; height: auto; image-rendering: pixelated; display: inline-block;">
+          </div>
+
+          <h1 class="main-title">..ROADSTER<br><span class="highlight-title">オートレース 3D RACER</span></h1>
+          <p class="subtitle">Next-Gen Tesla Rocket Thruster Supercar on NLEX Cyber Expressway</p>
           
           <!-- Roadster Concept Context Card -->
           <div class="roadster-concept-card">
@@ -163,7 +169,10 @@
             <canvas id="carPreviewCanvas" width="160" height="110"></canvas>
             <div class="color-picker-label">CUSTOMIZE YOUR ROADSTER FINISH:</div>
             <div class="color-options">
-              <button class="color-btn active" data-color="silver" title="Cyber Silver">
+              <button class="color-btn active" data-color="white" title="Pearl White">
+                <span class="color-swatch white" style="background:#ffffff; border:1px solid #999;"></span> White
+              </button>
+              <button class="color-btn" data-color="silver" title="Cyber Silver">
                 <span class="color-swatch silver"></span> Silver
               </button>
               <button class="color-btn" data-color="red" title="Electric Red">

@@ -359,6 +359,14 @@
 
   // 3D Roadster Color Themes
   const CAR_COLORS = {
+    white: {
+      body: 0xf8fafc,
+      accent: 0xcfd8dc,
+      dark: 0x1e2430,
+      lightbar: 0x00f0ff,
+      glow: 0x00f0ff,
+      name: 'Pearl White'
+    },
     silver: {
       body: 0xdce3eb,
       accent: 0x8898a8,
@@ -438,8 +446,8 @@
       this.pixelMode = 'LO';
       this.internalRes = { w: 640, h: 360 };
 
-      // Selected Roadster Color
-      this.selectedColor = 'silver';
+      // Selected Roadster Color (Default: Pearl White)
+      this.selectedColor = 'white';
 
       // Player State
       this.player = {
@@ -2096,15 +2104,15 @@
         return;
       }
 
-      // Launch 360° Aero Wind Stunt Jump! (Apex ~5.0m, cleanly clearing 3.8m trucks without soaring excessively)
+      // Launch 360° Aero Wind Stunt Jump! (Apex ~6.8m, cleanly clearing 3.8m trucks without clipping)
       p.isJumping = true;
-      p.jumpVelocity = 18.0; // Calibrated launch velocity (apex peaks at ~5.06m)
-      p.jumpY = 0.2;
+      p.jumpVelocity = 19.5; // High launch velocity for soaring clearance (~6.8m apex)
+      p.jumpY = 0.25;
       p.spinAngle = 0;
       p.inWindDraft = false;
       p.windDraftTimer = 0; // Consume the wind draft
       p.boostEnergy = Math.max(0, p.boostEnergy - 20); // Consumes 20% jump energy
-      p.speedKph = Math.max(p.speedKph + 22, 160); // Clean forward propulsion to clear long trucks
+      p.speedKph = Math.max(p.speedKph + 28, 175); // Clean forward propulsion to clear long trucks
 
       // Dynamic 360° Roll Direction: Right or Left based on input / trigger side
       let dirSign = -1; // -1 = Right roll (clockwise), +1 = Left roll (counter-clockwise)
@@ -2137,8 +2145,8 @@
 
       p.lastSpinDir = dirSign;
       p.spinDirection = dirName;
-      // Full 360° roll in 1.08s synchronized with airtime
-      p.spinVelocity = dirSign * ((Math.PI * 2) / 1.08);
+      // Full 360° roll in 1.38s synchronized with airtime
+      p.spinVelocity = dirSign * ((Math.PI * 2) / 1.38);
 
       this.sound.playJumpSound();
       this.sound.playWindCatchSound();
@@ -2339,9 +2347,9 @@
         }
       }
 
-      // Rocket Thruster Jump Physics & 360° Stunt Spin (Snappy ~5.0m apex cleanly clearing trucks)
+      // Rocket Thruster Jump Physics & 360° Stunt Spin (High ~6.8m apex cleanly clearing trucks)
       if (p.isJumping || p.jumpY > 0) {
-        const gravity = 32.0; // Responsive arcade gravity (clean ~5.06m apex with tight clearance)
+        const gravity = 28.0; // Smooth realistic arcade gravity
         p.jumpVelocity -= gravity * dt;
         p.jumpY += p.jumpVelocity * dt;
 
@@ -2690,26 +2698,33 @@
             bonus = 600;
           }
 
-          // If car is jumping or airborne, player cleanly leaps over vehicles and obstacles!
-          if (this.player.isJumping || this.player.jumpY > 0.15) {
-            const obsHeight = obs.type === 'truck' ? 3.8 : (obs.type === 'bus' ? 3.4 : (obs.type === 'van' ? 2.4 : 2.0));
-            // Gentle safety cushion: prevents scraping without jerky snapping or bouncing
-            if (dx < (obs.width + 2.0) * 0.5 && dz < (obs.length + 3.8) * 0.5) {
-              const minClearance = obsHeight + 0.55; // Clean 0.55m air margin over roof
-              if (this.player.jumpY < minClearance) {
-                this.player.jumpY = minClearance;
-                if (this.player.jumpVelocity < 0) this.player.jumpVelocity = 0; // Prevent sinking into roof
-              }
-            }
+          // 3D Physical Bounding Box Collision
+          const collWidth = (obs.width + 1.4) * 0.44;
+          const collLength = (obs.length + 3.2) * 0.44;
+          const inFootprint = dx < collWidth && dz < collLength;
 
-            if (dx < (obs.width + 2.0) * 0.5 && dz < (obs.length + 3.8) * 0.5 && !obs.hasJumpedOver) {
-              obs.hasJumpedOver = true;
-              this.score += bonus;
-              this.sound.playCheckpointFanfare();
-              this.showToast(`[360° ${this.player.spinDirection} OVER ${obsName}] +${bonus} PTS`, 1200);
+          if (inFootprint) {
+            let obsHeight = 1.8;
+            if (obs.type === 'truck') obsHeight = 3.8;
+            else if (obs.type === 'bus') obsHeight = 3.4;
+            else if (obs.type === 'van') obsHeight = 2.4;
+            else if (obs.type === 'boulder') obsHeight = 2.4;
+            else if (obs.type === 'barrier') obsHeight = 1.8;
+
+            if (this.player.jumpY >= obsHeight - 0.15) {
+              // Airborne and cleanly higher than the vehicle roof: clean leap over!
+              if (!obs.hasJumpedOver) {
+                obs.hasJumpedOver = true;
+                this.score += bonus;
+                this.sound.playCheckpointFanfare();
+                this.showToast(`[360° ${this.player.spinDirection} OVER ${obsName}] +${bonus} PTS`, 1200);
+              }
+            } else if (!obs.hasJumpedOver) {
+              // COLLISION! The player is inside the obstacle footprint and lower than roof height!
+              // Handles direct ground collision AND landing/hitting a follow-up obstacle ("may kasunod")
+              const wasAirborne = this.player.isJumping || this.player.jumpY > 0.2;
+              this.handlePlayerCollision(obs, obsName, wasAirborne);
             }
-          } else if (dx < (obs.width + 1.8) * 0.42 && dz < (obs.length + 3.8) * 0.42) {
-            this.handlePlayerCollision(obs, obsName);
           }
         }
 
@@ -2761,11 +2776,13 @@
       }
     }
 
-    handlePlayerCollision(obs, obsName) {
+    handlePlayerCollision(obs, obsName, wasAirborne = false) {
       this.sound.playCrashSound();
       this.sound.playMetalImpact();
-      this.shakeIntensity = 1.2;
+      this.shakeIntensity = 1.25;
       this.player.lives -= 1;
+      this.player.boostEnergy = Math.max(0, this.player.boostEnergy - 40); // Bawas energy!
+      this.player.isJumping = false; // Cancel jump state on impact
       this.player.invulnerableTimer = 1.6;
       this.player.speedKph = Math.max(35, this.player.speedKph * 0.42);
 
@@ -2785,20 +2802,22 @@
 
       // Dynamic Crash Toast
       let crashMsg = 'CRASH!';
-      if (obs && obs.type === 'truck') {
-        crashMsg = '[PILEUP] 18-WHEELER TUMBLED!';
+      if (wasAirborne) {
+        crashMsg = `[IMPACT] COLLISION WITH ${obsName}! -40% ENERGY`;
+      } else if (obs && obs.type === 'truck') {
+        crashMsg = '[PILEUP] 18-WHEELER TUMBLED! -40% ENERGY';
       } else if (obs && obs.type === 'bus') {
-        crashMsg = '[CRASH] EXPRESS BUS SPUN OUT!';
+        crashMsg = '[CRASH] EXPRESS BUS SPUN OUT! -40% ENERGY';
       } else if (obs && obs.type === 'van') {
-        crashMsg = '[TURNOVER] COMMUTER VAN FLIPPED!';
+        crashMsg = '[TURNOVER] COMMUTER VAN FLIPPED! -40% ENERGY';
       } else if (obs && obs.type === 'barrier') {
-        crashMsg = '[IMPACT] BARRICADE SHATTERED!';
+        crashMsg = '[IMPACT] BARRICADE SHATTERED! -40% ENERGY';
       } else if (obs && obs.type === 'boulder') {
-        crashMsg = '[IMPACT] GRANITE BOULDER SHATTERED!';
+        crashMsg = '[IMPACT] HIGHWAY DEBRIS IMPACT! -40% ENERGY';
       }
 
       if (this.player.lives > 0) {
-        this.showToast(`${crashMsg} (${this.player.lives} BATTERIES LEFT)`, 1500);
+        this.showToast(`${crashMsg} (${this.player.lives} BATTERIES LEFT)`, 1600);
       } else {
         this.showToast(`${crashMsg} ROADSTER CRITICAL DAMAGE!`, 1800);
         this.triggerGameOver();

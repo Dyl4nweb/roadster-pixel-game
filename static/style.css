@@ -614,6 +614,7 @@ html, body {
   border-radius: 1px;
   display: inline-block;
 }
+.color-swatch.white { background: #ffffff; border: 1px solid #78909c; }
 .color-swatch.silver { background: #dce3eb; }
 .color-swatch.red { background: #e61c35; }
 .color-swatch.blue { background: #00d2ff; }

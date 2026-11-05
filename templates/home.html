@@ -52,39 +52,55 @@
   <!-- MAIN WRAPPER -->
   <main class="hub-main">
 
-    <!-- HERO SECTION -->
-    <section class="hero-section">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        100% RETRO 3D WEBGL ARCADE • ZERO DOWNLOADS REQUIRED
+    <!-- PIXEL CAR RACER INSPIRED HERO STAGE -->
+    <section class="pixel-racer-stage">
+      <!-- 16-Bit Panoramic Japanese Highway Landscape Backdrop -->
+      <div class="stage-backdrop-container">
+        <img src="{{ url_for('static', filename='images/pixel_racer_bg.jpg') }}" alt="Pixel Highway Landscape" class="stage-bg-image">
+        <!-- Floating Falling Sakura Canvas -->
+        <canvas id="sakuraCanvas" class="sakura-canvas-layer"></canvas>
       </div>
 
-      <h1 class="hero-title">
-        ROADSTER 3D
-        <span class="hero-title-accent">NLEX CYBER SKYWAY</span>
-      </h1>
+      <!-- Centerpiece Arcade Logo Marquee -->
+      <div class="stage-marquee-content">
+        
+        <!-- White Tesla Roadster Perched on Top of Logo -->
+        <div class="pixel-roadster-perch">
+          <img src="{{ url_for('static', filename='images/pixel_white_tesla_roadster.png') }}" alt="White Tesla Roadster Supercar" class="pixel-roadster-img">
+        </div>
 
-      <p class="hero-subtitle">
-        Blast through the futuristic Luzon expressway in an experimental electric hypercar! 
-        Draft in the slipstream of massive <strong>18-wheeler trucks</strong>, launch high-altitude 
-        <strong>cold-gas thruster 360° rolls</strong>, evade highway pileups, and cement your callsign on the 
-        <strong>Global Hall of Fame Leaderboard</strong>!
-      </p>
+        <!-- 3D Chrome Arcade Title & Japanese Subtitle Plate -->
+        <div class="pixel-title-box">
+          <h1 class="pixel-chrome-title" data-text="..ROADSTER">..ROADSTER</h1>
+          <div class="pixel-subtitle-bar">
+            <span class="sub-jp">オートレース</span>
+            <span class="sub-en">CAR RACER</span>
+          </div>
+        </div>
 
-      <!-- HERO ACTIONS -->
-      <div class="hero-actions">
-        <a href="/play" class="hero-btn primary-btn pulse-glow">
-          <svg class="btn-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
-          <span>PLAY NOW (FREE IN BROWSER)</span>
-        </a>
-        <a href="#leaderboard" class="hero-btn secondary-btn">
-          <svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
-          <span>VIEW HALL OF FAME</span>
-        </a>
-        <a href="/thrusters" class="hero-btn outline-btn">
-          <svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 2.5s-4 4-4 9.5c0 3.5 2 6 4 7 2-1 4-3.5 4-7 0-5.5-4-9.5-4-9.5zm-5 13.5c-1.5 1-2.5 3-2.5 5 2 0 4-1 5-2.5-1-1-1.8-1.8-2.5-2.5zm10 0c-.7.7-1.5 1.5-2.5 2.5 1 1.5 3 2.5 5 2.5 0-2-1-4-2.5-5z" fill="currentColor"/></svg>
-          <span>COLD-GAS DEMO (9:16)</span>
-        </a>
+        <!-- Big Chunky Retro Arcade START Button (matches user reference image) -->
+        <div class="pixel-start-zone">
+          <a href="/play" class="arcade-pixel-start-btn">
+            <span>START</span>
+          </a>
+        </div>
+
+        <!-- Arcade Sub-Options -->
+        <div class="arcade-sub-options">
+          <a href="#leaderboard" class="arcade-pill-link">
+            <svg class="pill-icon gold" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+            <span>LEADERBOARD</span>
+          </a>
+          <a href="#controls" class="arcade-pill-link">
+            <svg class="pill-icon cyan" viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="currentColor"/></svg>
+            <span>HOW TO PLAY</span>
+          </a>
+          <a href="/thrusters" class="arcade-pill-link">
+            <svg class="pill-icon pink" viewBox="0 0 24 24"><path d="M12 2.5s-4 4-4 9.5c0 3.5 2 6 4 7 2-1 4-3.5 4-7 0-5.5-4-9.5-4-9.5zm-5 13.5c-1.5 1-2.5 3-2.5 5 2 0 4-1 5-2.5-1-1-1.8-1.8-2.5-2.5zm10 0c-.7.7-1.5 1.5-2.5 2.5 1 1.5 3 2.5 5 2.5 0-2-1-4-2.5-5z" fill="currentColor"/></svg>
+            <span>9:16 DEMO</span>
+          </a>
+        </div>
+
       </div>
 
       <!-- LIVE STATS STRIP -->
@@ -377,5 +393,7 @@
     })();
   </script>
 
+  <!-- Sakura Petals Particle Engine -->
+  <script src="{{ url_for('static', filename='sakura.js') }}?v={{ v }}"></script>
 </body>
 </html>
