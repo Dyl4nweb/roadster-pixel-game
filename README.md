@@ -117,3 +117,9 @@ python app.py
 ### 3. Open in Browser
 Navigate to:
 👉 **[http://localhost:5000](http://localhost:5000)**
+
+---
+
+## 🏆 Credits
+**Dylan Ramos created this game.**  
+Built with Three.js WebGL, Vanilla JavaScript, and Python Flask.
