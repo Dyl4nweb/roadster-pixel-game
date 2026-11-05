@@ -52,5 +52,14 @@
     "top_speed": 180,
     "stage": "Balintawak Entry",
     "date": "2026-10-16"
+  },
+  {
+    "driver": "PILOT_01",
+    "score": 17014,
+    "distance_km": 1.4,
+    "top_speed": 263,
+    "stage": "BALINTAWAK TOLL PLAZA",
+    "date": "2026-11-05",
+    "rank": 7
   }
 ]

@@ -1,10 +1,35 @@
 # 🚀 ROADSTER 3D: NLEX CYBER SKYWAY - DEPLOYMENT GUIDE
 
-This web application is 100% production-ready and can be deployed directly to cloud hosting platforms like **Render**, **Railway**, **Fly.io**, or **Heroku**.
+This web application is 100% production-ready and configured for instant deployment to **Vercel**, **Render**, **Railway**, or **Fly.io**.
 
 ---
 
-## ⚡ Option 1: Deploy on Render.com (Recommended - Free & Easiest)
+## ▲ Option 1: Deploy on Vercel (Fastest & 100% Free CDN)
+
+Your repository already includes the official Vercel configuration files:
+* [`vercel.json`](file:///c:/Projects/Python%20Game/vercel.json): Configures automatic routing to the serverless function.
+* [`api/index.py`](file:///c:/Projects/Python%20Game/api/index.py): WSGI entry point for Vercel Serverless Functions.
+* [`requirements.txt`](file:///c:/Projects/Python%20Game/requirements.txt): Installs `Flask`.
+
+### Step-by-Step Vercel Deployment via Web Dashboard (Recommended):
+1. **Push your latest changes to GitHub** (already done on `https://github.com/Dyl4nweb/roadster-pixel-game.git`).
+2. Go to [vercel.com](https://vercel.com/) and sign in with your GitHub account.
+3. Click **"Add New..."** &rarr; **"Project"**.
+4. In the list of repositories, select **`roadster-pixel-game`** and click **"Import"**.
+5. Leave all build settings at their defaults (Vercel automatically detects `vercel.json` and `api/index.py`).
+6. Click **"Deploy"**.
+7. In about 30–45 seconds, your game will be live with an SSL HTTPS domain, e.g.:
+   `https://roadster-pixel-game.vercel.app`
+
+### Deploy via Vercel CLI (Optional):
+```bash
+npm install -g vercel
+vercel
+```
+
+---
+
+## ⚡ Option 2: Deploy on Render.com (Free Web Service)
 
 1. **Push your code to GitHub**:
    ```bash

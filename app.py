@@ -10,14 +10,40 @@ import time
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 
-app = Flask(__name__)
+# Base directory & Flask app instance configured for both local, Docker, & Vercel serverless
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-# Persistent file storage paths
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SCORES_FILE = os.path.join(BASE_DIR, 'high_score.json')
-LEADERBOARD_FILE = os.path.join(BASE_DIR, 'leaderboard.json')
+def get_storage_path(filename):
+    """
+    Return writable storage path.
+    On Vercel / serverless (where filesystem is read-only), mirrors to /tmp.
+    """
+    if os.environ.get('VERCEL') or not os.access(BASE_DIR, os.W_OK):
+        tmp_path = os.path.join('/tmp', filename)
+        if not os.path.exists(tmp_path):
+            base_path = os.path.join(BASE_DIR, filename)
+            if os.path.exists(base_path):
+                import shutil
+                try:
+                    shutil.copyfile(base_path, tmp_path)
+                except Exception:
+                    pass
+        return tmp_path
+    return os.path.join(BASE_DIR, filename)
+
+def get_scores_file():
+    return get_storage_path('high_score.json')
+
+def get_leaderboard_file():
+    return get_storage_path('leaderboard.json')
 
 DEFAULT_LEADERBOARD = [
     {
@@ -69,9 +95,10 @@ DEFAULT_LEADERBOARD = [
 
 def load_leaderboard():
     """Load persistent global leaderboard records from JSON file."""
-    if os.path.exists(LEADERBOARD_FILE):
+    fpath = get_leaderboard_file()
+    if os.path.exists(fpath):
         try:
-            with open(LEADERBOARD_FILE, 'r', encoding='utf-8') as f:
+            with open(fpath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 if isinstance(data, list) and len(data) > 0:
                     return data
@@ -84,16 +111,18 @@ def load_leaderboard():
 def save_leaderboard(records):
     """Save persistent global leaderboard records to JSON file."""
     try:
-        with open(LEADERBOARD_FILE, 'w', encoding='utf-8') as f:
+        fpath = get_leaderboard_file()
+        with open(fpath, 'w', encoding='utf-8') as f:
             json.dump(records, f, indent=2)
     except Exception as e:
         print(f"Error saving leaderboard: {e}")
 
 def load_high_score():
     """Load top high score record from JSON file if exists."""
-    if os.path.exists(SCORES_FILE):
+    fpath = get_scores_file()
+    if os.path.exists(fpath):
         try:
-            with open(SCORES_FILE, 'r', encoding='utf-8') as f:
+            with open(fpath, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except Exception:
             pass
@@ -110,7 +139,8 @@ def load_high_score():
 def save_high_score(data):
     """Save top high score record to JSON file."""
     try:
-        with open(SCORES_FILE, 'w', encoding='utf-8') as f:
+        fpath = get_scores_file()
+        with open(fpath, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
     except Exception as e:
         print(f"Error saving high score: {e}")

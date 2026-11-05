@@ -118,6 +118,12 @@ python app.py
 Navigate to:
 👉 **[http://localhost:5000](http://localhost:5000)**
 
+### 4. Deploy to Vercel (100% Free Cloud Hosting)
+This project is configured with [`vercel.json`](file:///c:/Projects/Python%20Game/vercel.json) and [`api/index.py`](file:///c:/Projects/Python%20Game/api/index.py) for instant deployment:
+1. Connect your GitHub repository on [Vercel.com](https://vercel.com).
+2. Click **Deploy**. Vercel automatically deploys your game on a free HTTPS domain!
+See [`DEPLOYMENT.md`](file:///c:/Projects/Python%20Game/DEPLOYMENT.md) for full instructions.
+
 ---
 
 ## 🏆 Credits
