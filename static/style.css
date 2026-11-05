@@ -457,18 +457,18 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(10, 10, 18, 0.82);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(10, 10, 18, 0.88);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   overflow-y: auto;
   z-index: 30;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
-  padding: 16px;
+  padding: 8px 12px;
   box-sizing: border-box;
 }
 
@@ -482,14 +482,147 @@ html, body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 600px;
-  margin: auto;
-  padding: 8px 0;
-}
   gap: 8px;
   width: 100%;
+  max-width: 520px;
+  margin: auto;
+  padding: 6px 0;
+}
+
+.title-tesla-perch {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-roadster-img {
+  width: 160px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+}
+
+.modal-title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+}
+
+.modal-title-group .main-title {
+  font-size: 20px;
+  line-height: 1.1;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0px #000, 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.modal-title-group .highlight-title {
+  font-size: 11px;
+  line-height: 1.1;
+  color: var(--arcade-gold);
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0px #000, 0 0 8px rgba(248, 184, 0, 0.6);
+}
+
+.compact-color-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(18, 22, 34, 0.75);
+  border: 1px solid #333d54;
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+
+.compact-color-bar .color-picker-label {
+  font-size: 7px;
+  color: var(--arcade-gold);
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.compact-color-bar .color-options {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.compact-color-bar .color-btn {
+  padding: 3px 6px;
+  font-size: 7px;
+}
+
+.controls-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(14, 18, 28, 0.75);
+  border: 1px solid #283348;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 7px;
+  color: #a0aec0;
+  letter-spacing: 0.5px;
+  flex-wrap: wrap;
+}
+
+.controls-pill .key-cap {
+  color: #fff;
+  background: #252c3d;
+  padding: 2px 4px;
+  border-radius: 2px;
+  border: 1px solid #4a5568;
+  margin-right: 2px;
+}
+
+.title-start-btn {
+  width: 100%;
+  max-width: 400px;
+  font-size: 10px;
+  padding: 9px 18px;
+  margin: 2px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modal-sub-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.modal-sub-actions .sub-btn {
+  font-size: 7px;
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #cbd5e1;
+  border-color: #3d4963;
+}
+
+.modal-sub-actions .sub-btn:hover {
+  border-color: var(--neon-cyan);
+  color: #fff;
+}
+
+.modal-credit-tag {
+  font-size: 8px;
+  color: var(--arcade-gold);
+  letter-spacing: 1px;
+  font-weight: bold;
+  opacity: 0.9;
+  margin-top: 2px;
 }
 
 .pixel-badge {

@@ -519,8 +519,11 @@
       this.lastTime = performance.now();
       requestAnimationFrame((t) => this.gameLoop(t));
 
-      // Auto-start immediately into 3D gameplay so road, car, & HUD are 100% visible on load
-      this.startGame();
+      // Check if quick-start requested via URL query, otherwise show clean Title Hub
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('autostart') === '1') {
+        this.startGame();
+      }
     }
 
     // --- THREE.JS INITIALIZATION ---
