@@ -2316,12 +2316,24 @@
         this.submitHighScore(this.score, this.distanceMeters / 1000);
       }
 
-      document.getElementById('goScore').textContent = Math.floor(this.score).toLocaleString();
-      document.getElementById('goDistance').textContent = (this.distanceMeters / 1000).toFixed(2) + ' KM';
-      document.getElementById('goTopSpeed').textContent = Math.floor(this.player.topSpeedKph) + ' KPH';
-      document.getElementById('goCheckpoint').textContent = CHECKPOINTS[this.currentCheckpointIdx].name;
+      const goScore = document.getElementById('goScore');
+      if (goScore) goScore.textContent = Math.floor(this.score).toLocaleString();
+
+      const goDist = document.getElementById('goDistance');
+      if (goDist) goDist.textContent = (this.distanceMeters / 1000).toFixed(2) + ' KM';
+
+      const goSpeed = document.getElementById('goTopSpeed');
+      if (goSpeed) goSpeed.textContent = Math.floor(this.player.topSpeedKph) + ' KPH';
+
+      const cp = CHECKPOINTS[this.currentCheckpointIdx];
+      const cleanName = cp ? cp.name.replace(' TOLL PLAZA', '').replace(' EXPRESS', '').replace(' SKYWAY', '') : 'BALINTAWAK';
+      const goCpElem = document.getElementById('goCheckpoint');
+      if (goCpElem) {
+        goCpElem.textContent = `STAGE ${cp ? cp.id : 1}: ${cleanName}`;
+      }
+
       const recElem = document.getElementById('goHighScore');
-      recElem.textContent = Math.floor(this.highScore).toLocaleString() + (isNew ? ' (NEW RECORD!)' : '');
+      if (recElem) recElem.textContent = Math.floor(this.highScore).toLocaleString() + (isNew ? ' (NEW RECORD!)' : '');
 
       // Reset & prep Pilot Callsign submission form
       const callsignInput = document.getElementById('driverCallsignInput');

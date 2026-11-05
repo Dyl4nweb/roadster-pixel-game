@@ -232,24 +232,24 @@
           
           <div class="stats-panel">
             <div class="stat-row">
-              <span>FINAL SCORE:</span>
-              <strong id="goScore">0</strong>
+              <span class="stat-label">FINAL SCORE:</span>
+              <strong id="goScore" class="stat-val">0</strong>
             </div>
             <div class="stat-row">
-              <span>DISTANCE COVERED:</span>
-              <strong id="goDistance">0.0 KM</strong>
+              <span class="stat-label">DISTANCE COVERED:</span>
+              <strong id="goDistance" class="stat-val">0.0 KM</strong>
             </div>
             <div class="stat-row">
-              <span>TOP HIGHWAY SPEED:</span>
-              <strong id="goTopSpeed">0 KPH</strong>
+              <span class="stat-label">TOP HIGHWAY SPEED:</span>
+              <strong id="goTopSpeed" class="stat-val">0 KPH</strong>
             </div>
             <div class="stat-row">
-              <span>STAGE REACHED:</span>
-              <strong id="goCheckpoint">Balintawak</strong>
+              <span class="stat-label">STAGE REACHED:</span>
+              <strong id="goCheckpoint" class="stat-val">STAGE 1: BALINTAWAK</strong>
             </div>
             <div class="stat-row highlight">
-              <span>ALL-TIME RECORD:</span>
-              <strong id="goHighScore">0</strong>
+              <span class="stat-label">ALL-TIME RECORD:</span>
+              <strong id="goHighScore" class="stat-val">0</strong>
             </div>
           </div>
 
@@ -269,22 +269,24 @@
           </div>
 
           <div class="game-over-actions">
-            <button id="restartGameBtn" class="pixel-btn play-btn">
+            <button id="restartGameBtn" class="pixel-btn play-btn pulse-anim">
               <svg class="game-icon" viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/></svg>
-              REPAIR &amp; RELAUNCH ROADSTER (R)
+              REPAIR &amp; RELAUNCH (R)
             </button>
-            <button id="mainMenuBtn" class="pixel-btn secondary-btn" type="button" style="display:inline-flex; align-items:center; justify-content:center; gap:4px;">
-              <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
-              TITLE HUB
-            </button>
-            <a href="/#leaderboard" class="pixel-btn secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
-              <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
-              GLOBAL LEADERBOARD
-            </a>
-            <a href="/" class="pixel-btn outline-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
-              <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
-              HOME HUB
-            </a>
+            <div class="game-over-sub-row">
+              <button id="mainMenuBtn" class="pixel-btn sub-hub-btn" type="button">
+                <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
+                TITLE HUB
+              </button>
+              <a href="/#leaderboard" class="pixel-btn sub-hub-btn gold-accent">
+                <svg class="game-icon sm gold" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+                LEADERBOARD
+              </a>
+              <a href="/" class="pixel-btn sub-hub-btn">
+                <svg class="game-icon sm" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
+                HOME
+              </a>
+            </div>
           </div>
         </div>
       </div>
